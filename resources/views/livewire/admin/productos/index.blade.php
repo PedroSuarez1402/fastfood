@@ -7,32 +7,45 @@
     </flux:header>
 
     <!-- Simulación de Tabs de categorías -->
-    <div class="flex flex-wrap gap-2 border-b border-zinc-200 dark:border-zinc-700 pb-3">
-        @foreach ($categorias as $categoria)
-        <button
-            wire:click="seleccionarCategoria({{ $categoria->id }})"
-            class="px-4 py-2 rounded-lg text-sm font-medium transition 
-                    {{ $categoriaSeleccionada == $categoria->id 
-                        ? 'bg-emerald-600 text-white shadow-md' 
-                        : 'bg-transparent text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700' }}"
-        >
-            {{ $categoria->nombre }}
-        </button>
-        @endforeach
+    <div class="flex flex-wrap justify-between items-center border-b border-zinc-200 dark:border-zinc-700 pb-3">
+        <div class="flex flex-wrap gap-2">
+            @foreach ($categorias as $categoria)
+            <button
+                wire:click="seleccionarCategoria({{ $categoria->id }})"
+                class="px-4 py-2 rounded-lg text-sm font-medium transition 
+                        {{ $categoriaSeleccionada == $categoria->id 
+                            ? 'bg-emerald-600 text-white shadow-md' 
+                            : 'bg-transparent text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700' }}"
+            >
+                {{ $categoria->nombre }}
+            </button>
+            @endforeach
+        </div>
+        <div>
+            <a 
+                href="{{ route('admin.productos.create') }}"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition shadow-sm"
+            >
+            <i class="fa-solid fa-plus"></i>
+                Nuevo producto
+            </a>
+        </div>
     </div>
 
     <!-- Grid de productos -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
         @forelse ($productos as $producto)
             <div class="flex flex-col justify-between bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-sm overflow-hidden">
+                <a href="{{route('admin.productos.edit', $producto->id)}}">
                 <!-- Imagen -->
-                <div class="p-0">
-                    <img
-                        src="{{ asset('storage/' . $producto->imagen) }}"
-                        alt="{{ $producto->nombre }}"
-                        class="object-cover w-full h-40"
-                    />
-                </div>
+                    <div class="p-0">
+                        <img
+                            src="{{ asset('storage/' . $producto->imagen) }}"
+                            alt="{{ $producto->nombre }}"
+                            class="object-cover w-full h-40"
+                        />
+                    </div>
+                </a>
 
                 <!-- Contenido -->
                 <div class="flex-1 flex flex-col p-4">
