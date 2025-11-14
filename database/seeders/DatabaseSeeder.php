@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
         $faker = Faker::create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Administrador',
+            'email' => 'admin@example.com',
         ]);
 
         // Categorías

@@ -80,6 +80,16 @@ Antes de ejecutar las migraciones asegurate de crear con el nombre de la base de
 ```bash
 php artisan migrate
 ```
+tambien se debe enlazar la carpeta storage con la carpeta public
+
+```bash
+php artisan storage:link
+```
+y ejecutar las seeds
+
+```bash
+php artisan db:seed
+```
 
 ### 7. Iniciar el Servidor
 
