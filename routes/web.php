@@ -10,12 +10,12 @@ use App\Livewire\Admin\Productos\Index as ProductosIndex;
 use App\Livewire\Admin\Productos\Create as ProductosCreate;
 use App\Livewire\Admin\Productos\Edit as ProductosEdit;
 use App\Livewire\Admin\Productos\Show as ProductosShow;
-
-
+use App\Livewire\Public\Products;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
