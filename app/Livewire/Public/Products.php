@@ -5,35 +5,43 @@ namespace App\Livewire\Public;
 use App\Models\Categoria;
 use App\Models\Producto;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Products extends Component
 {
+    use WithPagination;
+    protected $paginationTheme = 'tailwind';
     public $search = '';
     public $categoriaSeleccionada = null;
 
+    // Resetear la paginación si cambia el search
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    // Resetear la paginación si cambia la categoría
     public function seleccionarCategoria($categoriaId)
     {
         $this->categoriaSeleccionada = $categoriaId;
+        $this->resetPage();
     }
     public function render()
     {
-        // Traer categorías ordenadas
         $categorias = Categoria::orderBy('nombre')->get();
 
-        // Query inicial
         $query = Producto::where('disponible', true);
 
-        // Filtro por categoría
         if ($this->categoriaSeleccionada) {
             $query->where('categoria_id', $this->categoriaSeleccionada);
         }
 
-        // Filtro por búsqueda
-        if ($this->search) {
-            $query->where('nombre', 'like', '%' . $this->search . '%');
+        if ($this->search !== '') {
+            $query->where('nombre', 'like', "%{$this->search}%");
         }
 
-        $productos = $query->get();
+        // PAGINACIÓN AQUÍ 
+        $productos = $query->paginate(20);
 
         return view('livewire.public.products', [
             'categorias' => $categorias,

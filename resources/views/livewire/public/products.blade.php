@@ -62,4 +62,7 @@
             <p class="text-center text-neutral-500 w-full col-span-full">No hay productos disponibles.</p>
         @endforelse
     </div>
+    <div class="mt-6">
+        {{ $productos->links() }}
+    </div>
 </div>
