@@ -52,7 +52,8 @@
                     </p>
 
                     <x-button variant="primary" size="md" class="mt-auto w-full"
-                        wire:click="$dispatch('addToCart', { id: {{ $producto->id }} })">
+                        wire:click="$emit('addToCart', {{ $producto->id }})"
+                        >
                         Agregar al pedido
                     </x-button>
                 </div>
@@ -64,5 +65,66 @@
     </div>
     <div class="mt-6">
         {{ $productos->links() }}
+    </div>
+    {{-- BOTÓN FLOTANTE PARA ABRIR SIDEBAR EN MÓVIL --}}
+    <button class="fixed bottom-5 right-5 lg:hidden bg-emerald-600 text-white px-5 py-3 rounded-full shadow-xl z-50"
+        wire:click="$set('sidebarOpen', true)">
+        🛒 Ver Pedido ({{ count($cart) }})
+    </button>
+
+    {{-- OVERLAY MÓVIL --}}
+    @if ($sidebarOpen)
+        <div class="fixed inset-0 bg-black/50 z-40 lg:hidden" wire:click="$set('sidebarOpen', false)">
+        </div>
+    @endif
+
+    {{-- SIDEBAR --}}
+    <div
+        class="
+        fixed top-0 right-0 w-80 h-full bg-white dark:bg-zinc-900 shadow-xl z-50 p-5 overflow-y-auto
+        transform transition-transform duration-300
+        {{ $sidebarOpen ? 'translate-x-0' : 'translate-x-full' }}
+        lg:translate-x-0
+    ">
+
+        {{-- Botón cerrar solo móvil --}}
+        <button class="lg:hidden text-2xl absolute top-3 right-3 text-zinc-500" wire:click="$set('sidebarOpen', false)">
+            ✕
+        </button>
+
+        <h2 class="text-xl font-bold mb-4 dark:text-white mt-6 lg:mt-0">Tu Pedido</h2>
+
+        {{-- ITEMS DEL CARRITO --}}
+        @forelse ($cart as $item)
+            <div class="flex justify-between items-center py-2 border-b border-zinc-200 dark:border-zinc-700">
+                <div>
+                    <p class="font-semibold dark:text-white">{{ $item['nombre'] }}</p>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400">
+                        ${{ number_format($item['precio']) }}
+                    </p>
+
+                    <div class="flex items-center gap-2 mt-2">
+                        <button wire:click="disminuirCantidad({{ $item['id'] }})"
+                            class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">-</button>
+
+                        <span class="dark:text-white">{{ $item['cantidad'] }}</span>
+
+                        <button wire:click="aumentarCantidad({{ $item['id'] }})"
+                            class="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded">+</button>
+                    </div>
+                </div>
+
+                <button wire:click="eliminarProducto({{ $item['id'] }})"
+                    class="text-red-600 hover:text-red-800 text-lg">✕</button>
+            </div>
+        @empty
+            <p class="text-zinc-500 dark:text-zinc-400">No has agregado productos.</p>
+        @endforelse
+
+        <div class="mt-4">
+            <x-button class="w-full" variant="primary" wire:click="finalizarPedido">
+                Finalizar Pedido
+            </x-button>
+        </div>
     </div>
 </div>
