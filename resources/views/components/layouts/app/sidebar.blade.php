@@ -31,6 +31,14 @@
                     >
                         {{ __('Productos') }}
                     </flux:navlist.item>
+                    <flux:navlist.item
+                        icon="ticket"
+                        :href="route('admin.pedidos.index')"
+                        :current="request()->routeIs('admin.pedidos.*')"
+                        wire:navigate
+                    >
+                        {{ __('Pedidos')}}
+                    </flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 

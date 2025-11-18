@@ -17,7 +17,6 @@ class Products extends Component
     public $cart = [];
     public $sidebarOpen = false;
 
-    protected $listeners = ['addToCart'];
 
     // Resetear la paginación si cambia el search
     public function updatedSearch()
@@ -25,21 +24,21 @@ class Products extends Component
         $this->resetPage();
     }
     //Agregar al carrito
-    public function addToCart($data)
+    public function addToCart($productId)
     {
-        $productId = $data['id'];
-
-        if (isset($this->cart[$productId])) {
+        if(isset($this->cart[$productId])) {
             $this->cart[$productId]['cantidad']++;
-        } else {
-            $producto = Producto::findOrFail($productId);
-            $this->cart[$productId] = [
-                'id' => $producto->id,
-                'nombre' => $producto->nombre,
-                'precio' => $producto->precio,
-                'cantidad' => 1,
-            ];
+            return;
         }
+
+        $producto = Producto::findOrFail($productId);
+        
+        $this->cart[$productId] = [
+            'id' => $producto->id,
+            'nombre' => $producto->nombre,
+            'precio' => $producto->precio,
+            'cantidad' => 1,
+        ];
     }
     public function aumentarCantidad($id)
     {

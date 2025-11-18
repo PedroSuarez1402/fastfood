@@ -52,7 +52,7 @@
                     </p>
 
                     <x-button variant="primary" size="md" class="mt-auto w-full"
-                        wire:click="$emit('addToCart', {{ $producto->id }})"
+                        wire:click="addToCart({{ $producto->id }})"
                         >
                         Agregar al pedido
                     </x-button>
@@ -67,24 +67,30 @@
         {{ $productos->links() }}
     </div>
     {{-- BOTÓN FLOTANTE PARA ABRIR SIDEBAR EN MÓVIL --}}
-    <button class="fixed bottom-5 right-5 lg:hidden bg-emerald-600 text-white px-5 py-3 rounded-full shadow-xl z-50"
-        wire:click="$set('sidebarOpen', true)">
-        🛒 Ver Pedido ({{ count($cart) }})
-    </button>
+    @if (!empty($cart))
+        <button class="fixed bottom-5 right-5 bg-emerald-600 text-white px-5 py-3 rounded-full shadow-xl z-50"
+            wire:click="$set('sidebarOpen', true)">
+            🛒 Ver Pedido ({{ count($cart) }})
+        </button>
+    @endif
 
     {{-- OVERLAY MÓVIL --}}
     @if ($sidebarOpen)
-        <div class="fixed inset-0 bg-black/50 z-40 lg:hidden" wire:click="$set('sidebarOpen', false)">
+        <div class="fixed inset-0 bg-black/50 z-40" 
+            wire:click="$set('sidebarOpen', false)"
+            >
         </div>
     @endif
 
     {{-- SIDEBAR --}}
+    @if (!empty($cart) || $sidebarOpen)
+        
     <div
         class="
         fixed top-0 right-0 w-80 h-full bg-white dark:bg-zinc-900 shadow-xl z-50 p-5 overflow-y-auto
         transform transition-transform duration-300
         {{ $sidebarOpen ? 'translate-x-0' : 'translate-x-full' }}
-        lg:translate-x-0
+        
     ">
 
         {{-- Botón cerrar solo móvil --}}
@@ -127,4 +133,6 @@
             </x-button>
         </div>
     </div>
+    
+    @endif
 </div>
