@@ -20,17 +20,22 @@ class Index extends Component
 
     public function mount()
     {
-        $this->mesas = Mesa::all();
+        $this->mesas = Mesa::where('estado', 'disponible')->get();
     }
     /* Asignar mesa */
     public function openAsignarMesaModal($id)
     {
-        $this->pedidoSeleccionado = Pedido::find($id);
+        $this->pedidoSeleccionado = Pedido::with('mesa')->find($id);
 
-        if (!$this->pedidoSeleccionado) {
-            return;
-        }
+        if (!$this->pedidoSeleccionado) return;
+
+        // Traer solo mesas disponibles + la mesa actual del pedido
+        $this->mesas = Mesa::where('estado', 'disponible')
+            ->orWhere('id', $this->pedidoSeleccionado->mesa_id)
+            ->get();
+
         $this->mesa_id = $this->pedidoSeleccionado->mesa_id;
+        $this->showVerDetalleModal = false;
         $this->showAsignarMesaModal = true;
     }
     /* Ver detalle modal */
@@ -52,7 +57,20 @@ class Index extends Component
             'mesa_id' => 'required|exists:mesas,id'
         ]);
 
-        $this->pedidoSeleccionado->update([
+        $pedido = $this->pedidoSeleccionado;
+
+        // Si el pedido ya tenía mesa previamente → liberarla
+        if ($pedido->mesa_id) {
+            Mesa::where('id', $pedido->mesa_id)
+                ->update(['estado' => 'disponible']);
+        }
+
+        // Asignar nueva mesa y marcarla ocupada
+        Mesa::where('id', $this->mesa_id)
+            ->update(['estado' => 'ocupada']);
+
+        // Actualizar el pedido
+        $pedido->update([
             'mesa_id' => $this->mesa_id,
             'estado' => 'servido',
         ]);
@@ -60,7 +78,27 @@ class Index extends Component
         $this->showAsignarMesaModal = false;
         session()->flash('success', 'Mesa asignada y pedido marcado como servido.');
 
-        // Reset paginación para refrescar vista
+        $this->resetPage();
+    }
+    public function marcarComoPagado($id)
+    {
+        $pedido = Pedido::find($id);
+
+        if (!$pedido) return;
+
+        // liberar mesa
+        if ($pedido->mesa_id) {
+            Mesa::where('id', $pedido->mesa_id)
+                ->update(['estado' => 'disponible']);
+        }
+
+        // actualizar pedido
+        $pedido->update([
+            'estado' => 'pagado',
+            'mesa_id' => null // ya no está en uso
+        ]);
+
+        session()->flash('success', 'Pedido pagado y mesa liberada.');
         $this->resetPage();
     }
     public function render()

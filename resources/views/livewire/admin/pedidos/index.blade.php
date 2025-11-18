@@ -55,6 +55,12 @@
                                     Asignar Mesa
                                 </x-button>
                             @endif
+                            @if ($pedido->estado == 'servido')
+                                <x-button size="sm" variant="danger"
+                                    wire:click="marcarComoPagado({{ $pedido->id }})">
+                                    Pagar
+                                </x-button>
+                            @endif
 
                         </td>
                     </tr>

@@ -45,4 +45,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/productos/{producto}', ProductosShow::class)->name('admin.productos.show');
     // Pedidos
     Route::get('admin/pedidos', PedidosIndex::class)->name('admin.pedidos.index');
+
+    // Mesas
 });
