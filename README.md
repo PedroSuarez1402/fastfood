@@ -92,6 +92,11 @@ php artisan db:seed
 ```
 
 ### 7. Iniciar el Servidor
+Para iniciar la aplicacion puede utilizar laragon o xampp pero antes de esto es importante ejecutar un comando para cargar el archivo manifiest
+
+```bash
+npm run build
+```
 
 - **Si usa laragon**:
 1. Coloca el proyecto dentro de laragon/www/
