@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Livewire\Admin\Mesas\Create;
 use App\Livewire\Admin\Mesas\Edit;
 use App\Livewire\Admin\Mesas\Index;
@@ -20,7 +21,7 @@ Route::get('/', function () {
 })->name('home');
 
 
-Route::view('dashboard', 'dashboard')
+Route::get('dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
