@@ -39,6 +39,14 @@
                     >
                         {{ __('Pedidos')}}
                     </flux:navlist.item>
+                    <flux:navlist.item
+                        icon="users"
+                        :href="route('admin.mesas.index')"
+                        :current="request()->routeIs('admin.mesas.*')"
+                        wire:navigate
+                    >
+                        {{ __('Mesas')}}
+                    </flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 

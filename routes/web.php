@@ -1,5 +1,8 @@
 <?php
 
+use App\Livewire\Admin\Mesas\Create;
+use App\Livewire\Admin\Mesas\Edit;
+use App\Livewire\Admin\Mesas\Index;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -47,4 +50,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/pedidos', PedidosIndex::class)->name('admin.pedidos.index');
 
     // Mesas
+    Route::get('admin/mesas', Index::class)->name('admin.mesas.index');
+    Route::get('admin/mesas/crear', Create::class)->name('admin.mesas.create');
+    Route::get('admin/mesas/{mesa}/editar', Edit::class)->name('admin.mesas.edit');
 });
