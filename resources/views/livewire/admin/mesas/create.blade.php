@@ -2,7 +2,7 @@
 
     <flux:header>
         <flux:heading size="xl" weight="semibold">
-            Crear Mesa
+            {{__('Crear Mesa')}}
         </flux:heading>
     </flux:header>
 
