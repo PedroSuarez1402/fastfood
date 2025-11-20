@@ -1,5 +1,7 @@
 # Aplicación de Comidas Rápidas
 
+<img width="1917" height="872" alt="image" src="https://github.com/user-attachments/assets/14ab0611-e8c2-44ac-9985-ee39394b9c86" />
+
 Esta es una aplicación web desarrollada con **Laravel 12**, **Livewire** y el kit starter **Flux**. Está diseñada como una herramienta para empresas de comida rápida, permitiendo preparar menús, gestionar mesas y pedidos realizados por los usuarios. Su objetivo es agilizar el servicio y mantener un control preciso de las ventas.
 
 ## Características
