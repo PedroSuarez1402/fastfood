@@ -72,23 +72,14 @@
         </div>
 
         {{-- GRID DE GRÁFICOS GRANDES --}}
-        {{-- En móvil 1 columna, en desktop (lg) 2 columnas --}}
+        
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-2">
             
-            <div class="p-6 bg-white border border-neutral-200 rounded-xl dark:border-neutral-700 dark:bg-neutral-900 shadow-sm">
-                <h3 class="text-lg font-semibold dark:text-white mb-4">Ventas últimos 7 días</h3>
-                {{-- Contenedor relativo para que ChartJS respete el tamaño --}}
-                <div class="relative h-64 w-full">
-                    <canvas id="graficoVentas"></canvas>
-                </div>
-            </div>
+            {{-- Componente de Ventas con Filtro de Fecha --}}
+            <livewire:dashboard.sales-chart />
 
-            <div class="p-6 bg-white border border-neutral-200 rounded-xl dark:border-neutral-700 dark:bg-neutral-900 shadow-sm">
-                <h3 class="text-lg font-semibold dark:text-white mb-4">Top 5 productos vendidos</h3>
-                <div class="relative h-64 w-full">
-                    <canvas id="graficoProductos"></canvas>
-                </div>
-            </div>
+            {{-- Componente de Productos con Filtro de Categoría --}}
+            <livewire:dashboard.products-chart />
 
         </div>
     </div>
@@ -147,68 +138,6 @@ document.addEventListener('livewire:navigated', () => {
             options: commonDoughnutOptions
         });
     }
-
-    /* 3. CHART: VENTAS 7 DÍAS */
-    const ctxVentas = document.getElementById('graficoVentas');
-    if (ctxVentas) {
-        new Chart(ctxVentas.getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: @json($labelsVentas),
-                datasets: [{
-                    label: 'Ventas ($)',
-                    data: @json($datosVentas),
-                    borderWidth: 3,
-                    borderColor: '#6366f1', // Indigo
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                }]
-            },
-            options: { 
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true, grid: { color: 'rgba(128, 128, 128, 0.1)' } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-    }
-
-    /* 4. CHART: TOP PRODUCTOS (Tu código existente) */
-    const ctxProductos = document.getElementById('graficoProductos');
-    if (ctxProductos) {
-        new Chart(ctxProductos.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: @json($labelsProductos),
-                datasets: [{
-                    label: 'Unidades',
-                    data: @json($datosProductos),
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.8)',
-                        'rgba(54, 162, 235, 0.8)',
-                        'rgba(255, 206, 86, 0.8)',
-                        'rgba(75, 192, 192, 0.8)',
-                        'rgba(153, 102, 255, 0.8)',
-                    ],
-                    borderRadius: 4
-                }]
-            },
-            options: { 
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
-                scales: {
-                    x: { beginAtZero: true, grid: { color: 'rgba(128, 128, 128, 0.1)' } },
-                    y: { grid: { display: false } }
-                }
-            }
-        });
-    }
-
+    
 }, { once: true });
 </script>

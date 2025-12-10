@@ -43,17 +43,7 @@ class DashboardController extends Controller
 
         // ... (El resto de tu código de Pedidos Recientes y Gráficos grandes sigue igual) ...
         $pedidosRecientes = Pedido::latest()->take(8)->get();
-
-        $ventasUltimos7Dias = Pedido::selectRaw('fecha_pedido as fecha, SUM(total) as total')
-            ->where('estado', 'pagado')
-            ->where('fecha_pedido', '>=', now()->subDays(7)->toDateString()) 
-            ->groupBy('fecha_pedido')
-            ->orderBy('fecha_pedido')
-            ->get();
-
-        $labelsVentas = $ventasUltimos7Dias->pluck('fecha')->map(fn($f) => Carbon::parse($f)->format('d M'));
-        $datosVentas = $ventasUltimos7Dias->pluck('total');
-
+        
         $topProductos = DetallePedido::selectRaw('producto_id, SUM(cantidad) as total')
             ->groupBy('producto_id')
             ->orderByDesc('total')
@@ -80,8 +70,6 @@ class DashboardController extends Controller
             'productoTop',
             'productoMasVendido',
             'pedidosRecientes',
-            'labelsVentas',
-            'datosVentas',
             'labelsProductos',
             'datosProductos'
         ));
