@@ -6,6 +6,22 @@
     </flux:header>
 
     <div class="mt-6 bg-white dark:bg-zinc-900 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-4">
+        {{-- NUEVO: Barra de Búsqueda --}}
+        <div class="mb-4">
+            <div class="relative max-w-sm">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    {{-- Icono Lupa (SVG simple) --}}
+                    <i class="fas fa-magnifying-glass"></i>
+                </div>
+                {{-- Input conectado a Livewire --}}
+                <input 
+                    wire:model.live.debounce.300ms="search" 
+                    type="text" 
+                    class="block w-full p-2 pl-10 text-sm text-zinc-900 border border-zinc-300 rounded-lg bg-zinc-50 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-zinc-800 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500" 
+                    placeholder="Buscar ticket, cliente, mesa..."
+                >
+            </div>
+        </div>
         <table class="w-full text-sm">
             <thead class="text-left border-b border-zinc-200 dark:border-zinc-700">
                 <tr>
@@ -35,9 +51,11 @@
                             <span
                                 class="
                                 px-3 py-1 rounded-full text-xs
-                                @if ($pedido->estado == 'pendiente') bg-yellow-100 text-yellow-800
+                                @if ($pedido->estado == 'pendiente') 
+                                    bg-yellow-100 text-yellow-800
                                 @else
-                                    bg-emerald-100 text-emerald-700 @endif
+                                    bg-emerald-100 text-emerald-700 
+                                @endif
                             ">
                                 {{ ucfirst($pedido->estado) }}
                             </span>
@@ -45,8 +63,8 @@
 
                         <td class="flex gap-2 py-3">
 
-                            <x-button size="sm" wire:click="openVerDetalleModal({{ $pedido->id }})">
-                                Ver
+                            <x-button size="sm" wire:click="openVerDetalleModal({{ $pedido->id }})" class="cursor-pointer" tooltip="Ver Detalle">
+                                <i class="fas fa-eye"></i>
                             </x-button>
 
                             @if ($pedido->estado == 'pendiente')
@@ -74,7 +92,7 @@
             </tbody>
         </table>
         {{-- Modal Asignar Mesa --}}
-        <x-modal title="Asignar Mesa" maxWidth="2xl" wire:model="showAsignarMesaModal">
+        <x-modal title="Asignar Mesa" maxWidth="lg" wire:model="showAsignarMesaModal">
 
             @if ($pedidoSeleccionado)
                 <div class="space-y-4">
@@ -115,7 +133,7 @@
 
         </x-modal>
         {{-- Modal Ver Detalle --}}
-        <x-modal title="Detalle del Pedido" maxWidth="2xl" wire:model="showVerDetalleModal">
+        <x-modal title="Detalle del Pedido" maxWidth="lg" wire:model="showVerDetalleModal">
 
             @if ($pedidoSeleccionado)
                 <div class="space-y-4">

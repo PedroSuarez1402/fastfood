@@ -17,10 +17,15 @@ class Index extends Component
     public $showVerDetalleModal = false;
     public $pedidoSeleccionado;
     public $mesa_id;
+    public $search = '';
 
     public function mount()
     {
         $this->mesas = Mesa::where('estado', 'disponible')->get();
+    }
+    public function updatingSearch()
+    {
+        $this->resetPage();
     }
     /* Asignar mesa */
     public function openAsignarMesaModal($id)
@@ -104,6 +109,18 @@ class Index extends Component
     public function render()
     {
         $pedidos = Pedido::with(['detalles.producto', 'mesa'])
+            ->where(function ($query) {
+                // Si hay algo en el buscador, aplicamos estos filtros
+                if ($this->search) {
+                    $query->where('codigo_ticket', 'like', '%' . $this->search . '%')
+                        ->orWhere('nombre_cliente', 'like', '%' . $this->search . '%')
+                        ->orWhere('estado', 'like', '%' . $this->search . '%')
+                        // Buscamos también dentro de la relación 'mesa'
+                        ->orWhereHas('mesa', function ($q) {
+                            $q->where('numero', 'like', '%' . $this->search . '%');
+                        });
+                }
+            })
             ->orderBy('id', 'desc')
             ->paginate(10);
 
