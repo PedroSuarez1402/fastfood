@@ -27,13 +27,16 @@ class AppServiceProvider extends ServiceProvider
             // Obtenemos configuración o usamos valores por defecto
             $siteName = Setting::where('key', 'site_name')->value('value') ?? config('app.name');
             $siteLogo = Setting::where('key', 'site_logo')->value('value');
+            $siteBanner = Setting::where('key', 'site_banner')->value('value');
             
             // Compartimos las variables con TODAS las vistas
             View::share('globalSiteName', $siteName);
             View::share('globalSiteLogo', $siteLogo);
+            View::share('globalSiteBanner', $siteBanner);
         } else {
             View::share('globalSiteName', config('app.name'));
             View::share('globalSiteLogo', null);
+            View::share('globalSiteBanner', null);
         }
     }
 }

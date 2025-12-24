@@ -84,19 +84,66 @@
                             <flux:error name="site_logo" />
                         </div>
                     </div>
+                    <flux:label class="mb-3">{{ __('Restaurant Banner') }}</flux:label>
+                    <div class="flex flex-col gap-6">
+
+                        {{-- Previsualización (Ancha para banner) --}}
+                        <div class="relative w-full group">
+                            <x-loading-overlay target="site_banner" />
+
+                            @if ($site_banner)
+                                <p class="mb-2 text-xs font-medium text-zinc-500">New Banner Preview:</p>
+                                <div
+                                    class="w-full overflow-hidden bg-white border rounded-lg h-44 dark:border-zinc-700">
+                                    <img src="{{ $site_banner->temporaryUrl() }}" class="object-cover w-full h-full">
+                                </div>
+                            @elseif ($current_banner)
+                                <p class="mb-2 text-xs font-medium text-zinc-500">Current Banner:</p>
+                                <div
+                                    class="w-full overflow-hidden bg-white border rounded-lg h-44 dark:border-zinc-700">
+                                    <img src="{{ asset('storage/' . $current_banner) }}"
+                                        class="object-cover w-full h-full">
+                                </div>
+                            @else
+                                <p class="mb-2 text-xs font-medium text-zinc-500">No Banner:</p>
+                                <div
+                                    class="flex items-center justify-center w-full bg-zinc-100 border rounded-lg h-44 dark:bg-zinc-800 dark:border-zinc-700">
+                                    <span class="text-sm text-zinc-400">Default banner will be displayed</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Zona Dropzone Banner --}}
+                        <div class="w-full">
+                            <div wire:ignore>
+                                <div class="flex items-center justify-center transition border-2 border-dashed rounded-lg dropzone border-zinc-300 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 min-h-[100px]"
+                                    id="banner-dropzone">
+                                    <div class="dz-message" data-dz-message>
+                                        <div class="flex flex-col items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-6 text-zinc-400">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                            </svg>
+                                            <span class="text-sm text-zinc-500 dark:text-zinc-400">Click or drag banner
+                                                image</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <flux:error name="site_banner" />
+                        </div>
+                    </div>
                 </flux:field>
 
                 {{-- Botón de Guardar --}}
                 <div class="flex justify-end pt-4">
-                    {{-- Usamos tu componente de botón inteligente --}}
+                    {{-- Botón (Actualizado para vigilar ambas cargas) --}}
                     <x-button type="submit" variant="primary" wire:loading.attr="disabled"
                         class="disabled:opacity-50 disabled:cursor-not-allowed">
-
-                        <span wire:loading.remove wire:target="site_logo">{{ __('Save Changes') }}</span>
-
-                        <span wire:loading wire:target="site_logo" class="flex items-center gap-2">
-                            <x-spinner size="w-4 h-4" />
-                            {{ __('Uploading...') }}
+                        <span wire:loading.remove wire:target="site_logo, site_banner">{{ __('Save Changes') }}</span>
+                        <span wire:loading wire:target="site_logo, site_banner" class="flex items-center gap-2">
+                            <x-spinner size="w-4 h-4" /> {{ __('Uploading...') }}
                         </span>
                     </x-button>
                 </div>
@@ -115,49 +162,61 @@
         <script>
             Dropzone.autoDiscover = false;
 
-            // ID único para este dropzone de settings
-            let dropzoneId = "settings-dropzone";
-            let dropzoneElement = document.getElementById(dropzoneId);
+            // --- 1. CONFIGURACIÓN DEL LOGO (Ya la tenías) ---
+            let logoDropzoneElement = document.getElementById("settings-dropzone");
+            if (logoDropzoneElement.dropzone) logoDropzoneElement.dropzone.destroy();
 
-            // Limpieza de instancia previa
-            if (dropzoneElement.dropzone) {
-                dropzoneElement.dropzone.destroy();
-            }
-
-            let settingsDropzone = new Dropzone("#" + dropzoneId, {
+            let logoDropzone = new Dropzone("#settings-dropzone", {
                 url: "#",
                 autoProcessQueue: false,
                 maxFiles: 1,
                 acceptedFiles: 'image/*',
                 addRemoveLinks: true,
                 dictRemoveFile: "Remove",
-
                 init: function() {
                     this.on("addedfile", function(file) {
-                        // 1. Limpiar archivo para evitar error toJSON
                         let cleanFile = new File([file], file.name, {
                             type: file.type
                         });
-
-                        // 2. Usar setTimeout para desacoplar ejecución
                         setTimeout(() => {
-                            // Subimos a la propiedad 'site_logo'
                             $wire.upload('site_logo', cleanFile,
-                                () => {
-                                    console.log('Logo uploaded');
-                                },
-                                () => {
-                                    console.error('Upload failed');
-                                    this.removeFile(file);
-                                }
+                                () => console.log('Logo uploaded'),
+                                () => this.removeFile(file)
                             );
                         }, 50);
                     });
-
                     this.on("removedfile", function(file) {
+                        setTimeout(() => $wire.set('site_logo', null), 50);
+                    });
+                }
+            });
+
+            // --- 2. CONFIGURACIÓN DEL BANNER (Nueva) ---
+            let bannerDropzoneElement = document.getElementById("banner-dropzone");
+            if (bannerDropzoneElement.dropzone) bannerDropzoneElement.dropzone.destroy();
+
+            let bannerDropzone = new Dropzone("#banner-dropzone", {
+                url: "#",
+                autoProcessQueue: false,
+                maxFiles: 1,
+                acceptedFiles: 'image/*',
+                addRemoveLinks: true,
+                dictRemoveFile: "Remove",
+                init: function() {
+                    this.on("addedfile", function(file) {
+                        let cleanFile = new File([file], file.name, {
+                            type: file.type
+                        });
                         setTimeout(() => {
-                            $wire.set('site_logo', null);
+                            // Subimos a 'site_banner'
+                            $wire.upload('site_banner', cleanFile,
+                                () => console.log('Banner uploaded'),
+                                () => this.removeFile(file)
+                            );
                         }, 50);
+                    });
+                    this.on("removedfile", function(file) {
+                        setTimeout(() => $wire.set('site_banner', null), 50);
                     });
                 }
             });
@@ -166,14 +225,54 @@
 
     {{-- Estilos Dropzone modo oscuro --}}
     <style>
-        .dropzone { padding: 1rem; }
-        .dropzone .dz-preview { margin: 0; width: 100px; height: 100px; }
-        .dropzone .dz-preview .dz-image { width: 100%; height: 100%; border-radius: 0.5rem; }
-        .dropzone .dz-preview .dz-image img { width: 100%; height: 100%; object-fit: cover; }
-        .dropzone .dz-preview { background: transparent !important; box-shadow: none !important; border: none !important; }
-        .dropzone .dz-details, .dropzone .dz-success-mark, .dropzone .dz-error-mark, .dropzone .dz-progress { display: none !important; }
-        .dropzone .dz-remove { margin-top: 0.5rem; font-size: 0.75rem; color: #ef4444; cursor: pointer; }
-        .dropzone .dz-remove:hover { text-decoration: underline; }
-        .dark .dropzone { background-color: transparent !important; }
+        .dropzone {
+            padding: 1rem;
+        }
+
+        .dropzone .dz-preview {
+            margin: 0;
+            width: 100px;
+            height: 100px;
+        }
+
+        .dropzone .dz-preview .dz-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 0.5rem;
+        }
+
+        .dropzone .dz-preview .dz-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .dropzone .dz-preview {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        .dropzone .dz-details,
+        .dropzone .dz-success-mark,
+        .dropzone .dz-error-mark,
+        .dropzone .dz-progress {
+            display: none !important;
+        }
+
+        .dropzone .dz-remove {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #ef4444;
+            cursor: pointer;
+        }
+
+        .dropzone .dz-remove:hover {
+            text-decoration: underline;
+        }
+
+        .dark .dropzone {
+            background-color: transparent !important;
+        }
     </style>
 </section>
