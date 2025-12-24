@@ -56,9 +56,12 @@ class Appearance extends Component
             $this->current_logo = $path;
             $this->reset('site_logo');
 
+            // 1. Mensaje Flash (Movido fuera del IF para que salga siempre)
             session()->flash('success', 'Configuración de apariencia actualizada.');
 
-            return redirect()->request()->header('Referer');
+            // 2. Redirección Corregida
+            // Usamos el helper global request() para obtener el header, no como método de redirect()
+            return redirect(request()->header('Referer'));
         }
     }
     public function render()
