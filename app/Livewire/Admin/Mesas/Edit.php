@@ -7,12 +7,18 @@ use App\Models\Pedido;
 use App\Models\Producto;
 use App\Models\DetallePedido;
 use Livewire\Component;
+use Illuminate\Validation\Rule; // Importante para la validación
 
 class Edit extends Component
 {
     public $mesa;
     public $pedido;
     public $productos;
+
+    // Propiedades para editar la mesa
+    public $numero;
+    public $capacidad;
+    public $estado;
 
     // Para agregar productos
     public $producto_id;
@@ -22,13 +28,37 @@ class Edit extends Component
     {
         $this->mesa = $mesa;
 
+        // Inicializar propiedades editables con los datos actuales
+        $this->numero = $mesa->numero;
+        $this->capacidad = $mesa->capacidad;
+        $this->estado = $mesa->estado;
+
         // Cargar pedido activo
         $this->pedido = $this->mesa->pedidos()
-            ->where('estado', 'servido')
+            ->where('estado', 'servido') // O el estado que manejes para pedidos activos
             ->with('detalles.producto')
             ->first();
 
         $this->productos = Producto::where('disponible', true)->get();
+    }
+
+    /** Función para actualizar datos de la mesa */
+    public function actualizarMesa()
+    {
+        $this->validate([
+            // Validar que el número sea único, ignorando la mesa actual
+            'numero' => ['required', Rule::unique('mesas', 'numero')->ignore($this->mesa->id)],
+            'capacidad' => 'required|integer|min:1',
+            'estado' => 'required|in:disponible,ocupada,reservada,mantenimiento', // Ajusta según tus estados
+        ]);
+
+        $this->mesa->update([
+            'numero' => $this->numero,
+            'capacidad' => $this->capacidad,
+            'estado' => $this->estado,
+        ]);
+
+        session()->flash('success_mesa', 'Información de la mesa actualizada correctamente.');
     }
 
     /** Agregar producto al pedido */
@@ -43,7 +73,9 @@ class Edit extends Component
                 'total' => 0,
             ]);
 
+            // Si se crea un pedido, forzamos el estado a ocupada
             $this->mesa->update(['estado' => 'ocupada']);
+            $this->estado = 'ocupada'; // Actualizamos la vista local también
         }
 
         $producto = Producto::find($this->producto_id);
