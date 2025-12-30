@@ -15,7 +15,7 @@
                     {{-- CASO 1: Imagen personalizada subida por el admin --}}
                     {{-- Le damos una altura mayor (h-20 = 80px) y ajuste automático --}}
                     <img src="{{ asset('storage/' . $globalSiteLogo) }}" alt="{{ $globalSiteName ?? config('app.name') }}"
-                        class="h-24 w-auto object-contain mb-2 hover:opacity-90 transition">
+                        class="h-40 w-auto object-contain mb-2 hover:opacity-90 transition">
                 @else
                     {{-- CASO 2: Ícono por defecto (Hamburguesa/Pizza) --}}
                     <span

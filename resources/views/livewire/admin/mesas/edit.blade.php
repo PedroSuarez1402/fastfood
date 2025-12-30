@@ -130,9 +130,9 @@
         <div class="flex gap-2">
             <select wire:model="producto_id"
                 class="border border-gray-300 dark:border-zinc-600 
-                       bg-white dark:bg-zinc-800 
-                       text-gray-900 dark:text-gray-100 
-                       rounded p-2 w-full focus:ring-blue-500">
+                    bg-white dark:bg-zinc-800 
+                    text-gray-900 dark:text-gray-100 
+                    rounded p-2 w-full focus:ring-blue-500">
                 <option value="">Seleccionar producto...</option>
                 @foreach ($productos as $prod)
                     <option value="{{ $prod->id }}">
@@ -143,14 +143,14 @@
     
             <input type="number" min="1" wire:model="cantidad"
                 class="border border-gray-300 dark:border-zinc-600 
-                       bg-white dark:bg-zinc-800 
-                       text-gray-900 dark:text-gray-100 
-                       p-2 rounded w-24 focus:ring-blue-500">
+                    bg-white dark:bg-zinc-800 
+                    text-gray-900 dark:text-gray-100 
+                    p-2 rounded w-24 focus:ring-blue-500">
     
             <button wire:click="agregarProducto"
                 class="px-4 py-2 bg-blue-600 dark:bg-blue-500 
-                       hover:bg-blue-700 dark:hover:bg-blue-600 
-                       text-white font-semibold rounded whitespace-nowrap">
+                    hover:bg-blue-700 dark:hover:bg-blue-600 
+                    text-white font-semibold rounded whitespace-nowrap">
                 Añadir
             </button>
         </div>

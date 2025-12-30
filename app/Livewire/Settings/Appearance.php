@@ -17,12 +17,14 @@ class Appearance extends Component
     public $current_logo;
     public $site_banner;
     public $current_banner;
+    public $site_theme;
 
     public function mount()
     {
         $this->site_name = Setting::where('key', 'site_name')->value('value') ?? config('app.name');
         $this->current_logo = Setting::where('key', 'site_logo')->value('value');
         $this->current_banner = Setting::where('key', 'site_banner')->value('value');
+        $this->site_theme = Setting::where('key', 'site_theme')->value('value') ?? 'default';
     }
 
     public function updatedSiteLogo()
@@ -76,6 +78,12 @@ class Appearance extends Component
             $this->current_banner = $pathBanner;
             $this->reset('site_banner');
         }
+
+        // 4. Guardar Tema
+        Setting::updateOrCreate(
+            ['key' => 'site_theme'], 
+            ['value' => $this->site_theme]
+        );
 
         // 1. Mensaje Flash (Movido fuera del IF para que salga siempre)
         session()->flash('success', 'Configuración de apariencia actualizada.');

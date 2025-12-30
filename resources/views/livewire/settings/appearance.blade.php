@@ -2,11 +2,82 @@
     @include('partials.settings-heading')
 
     <x-settings.layout :heading="__('Appearance')" :subheading="__('Update the appearance settings for your account')">
-        <flux:radio.group x-data variant="segmented" x-model="$flux.appearance">
+        {{-- <flux:radio.group x-data variant="segmented" x-model="$flux.appearance">
             <flux:radio value="light" icon="sun">{{ __('Light') }}</flux:radio>
             <flux:radio value="dark" icon="moon">{{ __('Dark') }}</flux:radio>
             <flux:radio value="system" icon="computer-desktop">{{ __('System') }}</flux:radio>
-        </flux:radio.group>
+        </flux:radio.group> --}}
+        <div class="grid grid-cols-2 gap-6 sm:grid-cols-4 justify-items-center">
+
+            {{-- Opción 1: Yale Blue & Lemon Chiffon --}}
+            <button type="button" wire:click="$set('site_theme', 'yale')" class="group flex flex-col items-center gap-3">
+                <div class="relative w-14 h-14 rounded-full shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md ring-2 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 {{ $site_theme === 'yale' ? 'ring-blue-800' : 'ring-transparent' }}"
+                    style="background: linear-gradient(135deg, #FFFACD 50%, #0F4D92 50%);">
+                    {{-- Check icon si está activo --}}
+                    @if ($site_theme === 'yale')
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-full h-0.5 bg-white/50 rotate-45"></div> {{-- Línea divisoria decorativa --}}
+                        </div>
+                    @endif
+                </div>
+                <span
+                    class="text-xs font-medium text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                    Yale & Lemon
+                </span>
+            </button>
+
+            {{-- Opción 2: Milk & Plum --}}
+            <button type="button" wire:click="$set('site_theme', 'plum')"
+                class="group flex flex-col items-center gap-3">
+                <div class="relative w-14 h-14 rounded-full shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md ring-2 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 {{ $site_theme === 'plum' ? 'ring-fuchsia-800' : 'ring-transparent' }}"
+                    style="background: linear-gradient(135deg, #FDFFF5 50%, #8E4585 50%);">
+                    @if ($site_theme === 'plum')
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-full h-0.5 bg-white/50 rotate-45"></div>
+                        </div>
+                    @endif
+                </div>
+                <span
+                    class="text-xs font-medium text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                    Milk & Plum
+                </span>
+            </button>
+
+            {{-- Opción 3: Soft Oat & Luxe Noir --}}
+            <button type="button" wire:click="$set('site_theme', 'noir')"
+                class="group flex flex-col items-center gap-3">
+                <div class="relative w-14 h-14 rounded-full shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md ring-2 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 {{ $site_theme === 'noir' ? 'ring-zinc-900' : 'ring-transparent' }}"
+                    style="background: linear-gradient(135deg, #E0D5C6 50%, #1A1A1A 50%);">
+                    @if ($site_theme === 'noir')
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-full h-0.5 bg-white/50 rotate-45"></div>
+                        </div>
+                    @endif
+                </div>
+                <span
+                    class="text-xs font-medium text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                    Oat & Noir
+                </span>
+            </button>
+
+            {{-- Opción 4: Matcha Mist & Dusty Coal --}}
+            <button type="button" wire:click="$set('site_theme', 'coal')"
+                class="group flex flex-col items-center gap-3">
+                <div class="relative w-14 h-14 rounded-full shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md ring-2 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 {{ $site_theme === 'coal' ? 'ring-slate-700' : 'ring-transparent' }}"
+                    style="background: linear-gradient(135deg, #EFF7EE 50%, #36454F 50%);">
+                    @if ($site_theme === 'coal')
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-full h-0.5 bg-white/50 rotate-45"></div>
+                        </div>
+                    @endif
+                </div>
+                <span
+                    class="text-xs font-medium text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                    Matcha & Coal
+                </span>
+            </button>
+
+        </div>
 
         <div class="mt-3">
             <form wire:submit.prevent="save" class="space-y-6">
@@ -121,7 +192,8 @@
                                     <div class="dz-message" data-dz-message>
                                         <div class="flex flex-col items-center gap-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-6 text-zinc-400">
+                                                stroke-width="1.5" stroke="currentColor"
+                                                class="size-6 text-zinc-400">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                                             </svg>
