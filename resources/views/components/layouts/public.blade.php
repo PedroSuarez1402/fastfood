@@ -5,7 +5,7 @@
     @include('partials.head')
 </head>
 
-<body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] min-h-screen p-4 flex flex-col items-center">
+<body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 min-h-screen p-4 flex flex-col items-center">
 
     <header class="w-full max-w-4xl mb-6">
         @if (Route::has('login'))
