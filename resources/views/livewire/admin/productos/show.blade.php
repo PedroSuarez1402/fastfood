@@ -1,9 +1,9 @@
 <div class="space-y-6">
-    <flux:header>
-        <flux:heading size="xl" weight="semibold">
-            {{ __('Detalles del Producto') }}
-        </flux:heading>
-    </flux:header>
+    <x-header
+        title="Detalles del Producto"
+        description="Aqui puedes ver los detalles del producto"
+        >
+    </x-header>
     <x-card class="overflow-hidden">
         <!-- Imagen -->
         <img
@@ -60,7 +60,7 @@
                 <a
                     href="{{ route('admin.productos.edit', $producto->id) }}"
                     wire:navigate
-                    class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition shadow-sm"
+                    class="px-4 py-2 rounded-lg bg-blue-300 text-white text-sm hover:bg-blue-400 transition shadow-sm"
                 >
                     Editar
                 </a>

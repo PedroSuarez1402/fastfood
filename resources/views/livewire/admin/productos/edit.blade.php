@@ -1,9 +1,10 @@
 <div class="mx-auto max-2-3xl space-y-6">
     
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">
-            {{ __('Editar Producto') }}
-        </h1>
+        <x-header 
+            title="Editar Producto"
+            description="Edita el producto {{ $producto->nombre }}">
+        </x-header>
         <a href="{{ route('admin.productos.index') }}"
             class="px-4 py-2 text-sm font-medium rounded-lg bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600">
             volver

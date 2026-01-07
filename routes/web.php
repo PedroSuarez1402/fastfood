@@ -15,6 +15,7 @@ use App\Livewire\Admin\Productos\Create as ProductosCreate;
 use App\Livewire\Admin\Productos\Edit as ProductosEdit;
 use App\Livewire\Admin\Productos\Show as ProductosShow;
 use App\Livewire\Admin\Pedidos\Index as PedidosIndex;
+use App\Livewire\Admin\Users\Index as UsersIndex;
 
 Route::get('/', function () {
     return view('welcome');
@@ -54,4 +55,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/mesas', Index::class)->name('admin.mesas.index');
     Route::get('admin/mesas/crear', Create::class)->name('admin.mesas.create');
     Route::get('admin/mesas/{mesa}/editar', Edit::class)->name('admin.mesas.edit');
+
+    // Gestion de usuarios
+    Route::get('admin/users', UsersIndex::class)
+        ->middleware('can:gestionar_usuarios')
+        ->name('admin.users.index');
 });

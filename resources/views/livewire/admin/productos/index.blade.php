@@ -1,10 +1,9 @@
 <div class="space-y-6">
     <!-- Encabezado -->
-    <flux:header>
-        <flux:heading size="xl" weight="semibold">
-            {{ __('Gestión de Productos') }}
-        </flux:heading>
-    </flux:header>
+    <x-header 
+        title="Gestion de Productos"
+        description="Administra los productos del restaurante.">
+    </x-header>
 
     <!-- Simulación de Tabs de categorías -->
     <div class="flex flex-wrap justify-between items-center border-b border-zinc-200 dark:border-zinc-700 pb-3">

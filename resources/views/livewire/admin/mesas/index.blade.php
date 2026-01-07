@@ -1,15 +1,16 @@
 <div class="w-full space-y-6">
 
     {{-- Header --}}
-    <flux:header>
-        <flux:heading size="xl" weight="semibold" class="px-6">
-            {{ __('Mesas') }}
-        </flux:heading>
-
+    <x-header
+        title="Mesas"
+        description="Administra las mesas del restaurante."
+        >
+        
         <flux:button href="{{ route('admin.mesas.create') }}" icon="plus" >
             Nueva Mesa
         </flux:button>
-    </flux:header>
+    </x-header>
+
 
     {{-- Plano de mesas --}}
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">

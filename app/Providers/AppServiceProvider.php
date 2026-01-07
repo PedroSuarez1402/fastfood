@@ -60,7 +60,8 @@ class AppServiceProvider extends ServiceProvider
                     $cssVariables .= "--color-neutral-{$shade}: {$value};";
                     $cssVariables .= "--color-gray-{$shade}: {$value};";
                     $cssVariables .= "--color-emerald-{$shade}: {$value};";
-                    
+                    $cssVariables .= "--color-red-{$shade}: {$value};";
+                    $cssVariables .= "--color-blue-{$shade}: {$value};";
                 }
             }
             $cssVariables .= "}";

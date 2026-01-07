@@ -1,8 +1,9 @@
 <div class="max-2-3xl mx-auto space-y-6">
     <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">
-            {{ __('Nuevo Producto') }}
-        </h1>
+        <x-header 
+            title="Nuevo Producto"
+            description="Crea un nuevo producto para el restaurante.">
+        </x-header>
         <a href="{{ route('admin.productos.index') }}"
             class="px-4 py-2 bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded-lg text-sm font-medium">
             volver

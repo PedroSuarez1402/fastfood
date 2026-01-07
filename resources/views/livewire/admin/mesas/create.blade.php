@@ -1,10 +1,10 @@
 <div class="w-full space-y-6">
 
-    <flux:header>
-        <flux:heading size="xl" weight="semibold">
-            {{__('Crear Mesa')}}
-        </flux:heading>
-    </flux:header>
+    <x-header
+        title="Nueva Mesa"
+        description="Crea una nueva mesa para el restaurante."
+    >
+    </x-header>
 
     <form wire:submit.prevent="save" class="space-y-6 bg-white dark:bg-zinc-900 rounded-xl p-6 shadow">
 

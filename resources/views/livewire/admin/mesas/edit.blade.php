@@ -1,5 +1,9 @@
 <div class="space-y-6">
 
+    <x-header
+        title="Editar Mesa"
+        description="Edita la configuración de la mesa."
+    ></x-header>
     {{-- Header / Formulario de Edición de Mesa --}}
     <div class="p-4 bg-white dark:bg-zinc-900 shadow rounded border border-gray-200 dark:border-zinc-700">
         <div class="flex justify-between items-center mb-4">
