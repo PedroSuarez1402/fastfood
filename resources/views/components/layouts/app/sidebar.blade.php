@@ -11,7 +11,7 @@
 
         {{-- 1. SIDEBAR DESKTOP --}}
         <aside
-            class="hidden lg:flex flex-col w-64 fixed inset-y-0 z-50 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+            class="hidden lg:flex flex-col w-64 fixed inset-y-0 z-50 border-r border-zinc-200 dark:border-zinc-800 bg-zinc-200 dark:bg-zinc-900">
 
             {{-- Logo --}}
             <div class="flex items-center justify-center h-16 border-b border-zinc-200 dark:border-zinc-800 px-6">
@@ -60,6 +60,9 @@
                                     Usuarios
                                 </x-sidebar.link>
                                 {{-- Aquí puedes agregar Roles, Permisos, etc. --}}
+                                <x-sidebar.link href="{{ route('admin.roles.index') }}" :active="request()->routeIs('admin.roles.*')" wire:navigate>
+                                    Roles
+                                </x-sidebar.link>
                             </x-sidebar.dropdown>
                         @endcan
 
@@ -158,6 +161,9 @@
                                 <x-sidebar.dropdown title="Gestión" icon="fas fa-cog" :active="request()->routeIs('admin.users.*')">
                                     <x-sidebar.link href="{{ route('admin.users.index') }}" :active="request()->routeIs('admin.users.*')" wire:navigate>
                                         Usuarios
+                                    </x-sidebar.link>
+                                    <x-sidebar.link href="{{ route('admin.roles.index') }}" :active="request()->routeIs('admin.roles.*')" wire:navigate>
+                                        Roles
                                     </x-sidebar.link>
                                 </x-sidebar.dropdown>
                             @endcan
