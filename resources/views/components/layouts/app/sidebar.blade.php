@@ -5,158 +5,230 @@
     @include('partials.head')
 </head>
 
-<body class="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 antialiased">
-    <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
-        <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
+<body class="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 antialiased font-sans">
 
-        <a href="{{ route('home') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
-            <x-app-logo />
-        </a>
+    <div class="flex min-h-screen w-full" x-data="{ sidebarOpen: false }">
 
-        <flux:navlist variant="outline">
+        {{-- 1. SIDEBAR DESKTOP --}}
+        <aside
+            class="hidden lg:flex flex-col w-64 fixed inset-y-0 z-50 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
 
-            <flux:navlist.group :heading="__('Platform')" class="grid">
-                <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
-                    wire:navigate>
-                    {{ __('Dashboard') }}
-                </flux:navlist.item>
-            </flux:navlist.group>
+            {{-- Logo --}}
+            <div class="flex items-center justify-center h-16 border-b border-zinc-200 dark:border-zinc-800 px-6">
+                <a href="{{ route('home') }}" class="flex items-center gap-2 font-bold text-xl" wire:navigate>
+                    <x-app-logo class="h-8 w-auto" />
+                </a>
+            </div>
 
-            <flux:navlist.group :heading="__('Administracion')" class="grid">
-                <flux:navlist.item icon="shopping-bag" :href="route('admin.productos.index')"
-                    :current="request()->routeIs('admin.productos.*')" wire:navigate>
-                    {{ __('Productos') }}
-                </flux:navlist.item>
-                <flux:navlist.item icon="ticket" :href="route('admin.pedidos.index')"
-                    :current="request()->routeIs('admin.pedidos.*')" wire:navigate>
-                    {{ __('Pedidos') }}
-                </flux:navlist.item>
-                <flux:navlist.item icon="table-cells" :href="route('admin.mesas.index')"
-                    :current="request()->routeIs('admin.mesas.*')" wire:navigate>
-                    {{ __('Mesas') }}
-                </flux:navlist.item>
-            </flux:navlist.group>
-            <flux:navlist.group class="grid" x-data="{
-                open: {{ request()->routeIs('admin.*') ? 'true' : 'false' }}
-            }">
-                {{-- HEADER DEL DESPLEGABLE --}}
-                <button type="button" @click="open = !open"
-                    class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-zinc-700 rounded-lg
-               hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800">
-                    <div class="flex items-center gap-2">
-                        <x-flux::icon name="cog-6-tooth" class="w-4 h-4" />
-                        <span>{{ __('Gestion') }}</span>
+            {{-- Navegación --}}
+            <nav class="flex-1 overflow-y-auto p-4 space-y-6">
+
+                {{-- Plataforma --}}
+                <x-sidebar.group heading="Plataforma">
+                    <x-sidebar.link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" icon="fas fa-home" wire:navigate>
+                        Dashboard
+                    </x-sidebar.link>
+                </x-sidebar.group>
+
+                {{-- Administración (Protegido con @can) --}}
+                @can('ver_dashboard') {{-- O un permiso general para ver menú admin --}}
+                    <x-sidebar.group heading="Administración">
+
+                        @can('gestionar_productos')
+                            <x-sidebar.link href="{{ route('admin.productos.index') }}" :active="request()->routeIs('admin.productos.*')"
+                                icon="fas fa-shopping-bag" wire:navigate>
+                                Productos
+                            </x-sidebar.link>
+                        @endcan
+
+                        @can('gestionar_pedidos')
+                            <x-sidebar.link href="{{ route('admin.pedidos.index') }}" :active="request()->routeIs('admin.pedidos.*')" icon="fas fa-ticket-alt"
+                                wire:navigate>
+                                Pedidos
+                            </x-sidebar.link>
+                        @endcan
+
+                        <x-sidebar.link href="{{ route('admin.mesas.index') }}" :active="request()->routeIs('admin.mesas.*')" icon="fas fa-th"
+                            wire:navigate>
+                            Mesas
+                        </x-sidebar.link>
+
+                        {{-- Menú Desplegable 'Gestión' --}}
+                        @can('gestionar_usuarios')
+                            <x-sidebar.dropdown title="Gestión" icon="fas fa-cog" :active="request()->routeIs('admin.users.*')">
+                                <x-sidebar.link href="{{ route('admin.users.index') }}" :active="request()->routeIs('admin.users.*')" wire:navigate>
+                                    Usuarios
+                                </x-sidebar.link>
+                                {{-- Aquí puedes agregar Roles, Permisos, etc. --}}
+                            </x-sidebar.dropdown>
+                        @endcan
+
+                    </x-sidebar.group>
+                @endcan
+
+            </nav>
+
+            {{-- Perfil Usuario (Footer del Sidebar) --}}
+            <div class="border-t border-zinc-200 dark:border-zinc-800 p-4">
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open"
+                        class="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-left">
+                        <div
+                            class="h-9 w-9 rounded-lg bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center font-bold text-sm">
+                            {{ auth()->user()->initials() }}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium truncate">{{ auth()->user()->name }}</p>
+                            <p class="text-xs text-zinc-500 truncate">{{ auth()->user()->email }}</p>
+                        </div>
+                        <i class="fas fa-chevron-up text-xs text-zinc-400"></i>
+                    </button>
+
+                    {{-- Dropdown Usuario --}}
+                    <div x-show="open" @click.away="open = false" x-transition
+                        class="absolute bottom-full left-0 w-full mb-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg py-1 z-50">
+                        <a href="{{ route('profile.edit') }}" wire:navigate
+                            class="block px-4 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700">
+                            Configuración
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
+                                Cerrar Sesión
+                            </button>
+                        </form>
                     </div>
-
-                    <x-flux::icon name="chevron-down" class="w-4 h-4 transition-transform duration-200"
-                        x-bind:class="{ 'rotate-180': open }" />
-                </button>
-
-                {{-- CONTENIDO DESPLEGABLE --}}
-                <div x-show="open" x-collapse class="mt-1 space-y-1 ps-4">
-                    <flux:navlist.item icon="users" :href="route('admin.users.index')"
-                        :current="request()->routeIs('admin.user.*')" wire:navigate>
-                        {{ __('Usuarios') }}
-                    </flux:navlist.item>
-
                 </div>
-            </flux:navlist.group>
+            </div>
+        </aside>
 
-        </flux:navlist>
-        <flux:spacer />
+        {{-- 2. SIDEBAR MOBILE (Overlay + Drawer) --}}
+        <div x-show="sidebarOpen" class="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
+            {{-- Backdrop --}}
+            <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="sidebarOpen = false" x-transition.opacity>
+            </div>
 
+            {{-- Drawer --}}
+            <div class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-zinc-900 shadow-xl flex flex-col h-full"
+                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="-translate-x-full"
+                x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full">
 
-        <!-- Desktop User Menu -->
-        <flux:dropdown class="hidden lg:block" position="bottom" align="start">
-            <flux:profile :name="auth()->user()->name" :initials="auth()->user()->initials()"
-                icon:trailing="chevrons-up-down" />
+                {{-- Cabecera del Drawer --}}
+                <div class="flex justify-between items-center p-4 border-b border-zinc-200 dark:border-zinc-800">
+                    <span class="font-bold text-xl">Menú</span>
+                    <button @click="sidebarOpen = false"
+                        class="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
 
-            <flux:menu class="w-[220px]">
-                <flux:menu.radio.group>
-                    <div class="p-0 text-sm font-normal">
-                        <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                            <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                <span
-                                    class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                    {{ auth()->user()->initials() }}
-                                </span>
-                            </span>
+                {{-- Navegación (Scrollable) --}}
+                <div class="flex-1 overflow-y-auto p-4 space-y-6">
+                    {{-- Aquí repites los mismos links que en desktop --}}
+                    <x-sidebar.group heading="Plataforma">
+                        <x-sidebar.link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" icon="fas fa-home"
+                            wire:navigate>
+                            Dashboard
+                        </x-sidebar.link>
+                    </x-sidebar.group>
 
-                            <div class="grid flex-1 text-start text-sm leading-tight">
-                                <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                    @can('ver_dashboard')
+                        <x-sidebar.group heading="Administración">
+                            @can('gestionar_productos')
+                                <x-sidebar.link href="{{ route('admin.productos.index') }}" :active="request()->routeIs('admin.productos.*')"
+                                    icon="fas fa-shopping-bag" wire:navigate>
+                                    Productos
+                                </x-sidebar.link>
+                            @endcan
+                            {{-- ... resto de links ... --}}
+                            @can('gestionar_pedidos')
+                                <x-sidebar.link href="{{ route('admin.pedidos.index') }}" :active="request()->routeIs('admin.pedidos.*')"
+                                    icon="fas fa-ticket-alt" wire:navigate>
+                                    Pedidos
+                                </x-sidebar.link>
+                            @endcan
+
+                            <x-sidebar.link href="{{ route('admin.mesas.index') }}" :active="request()->routeIs('admin.mesas.*')" icon="fas fa-th"
+                                wire:navigate>
+                                Mesas
+                            </x-sidebar.link>
+                            @can('gestionar_usuarios')
+                                <x-sidebar.dropdown title="Gestión" icon="fas fa-cog" :active="request()->routeIs('admin.users.*')">
+                                    <x-sidebar.link href="{{ route('admin.users.index') }}" :active="request()->routeIs('admin.users.*')" wire:navigate>
+                                        Usuarios
+                                    </x-sidebar.link>
+                                </x-sidebar.dropdown>
+                            @endcan
+                        </x-sidebar.group>
+                    @endcan
+                </div>
+
+                {{-- Footer de Usuario (ESTO ES LO QUE FALTABA) --}}
+                <div class="border-t border-zinc-200 dark:border-zinc-800 p-4 bg-zinc-50 dark:bg-zinc-900">
+                    <div x-data="{ userOpen: false }" class="relative">
+                        <button @click="userOpen = !userOpen"
+                            class="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-left">
+                            <div
+                                class="h-9 w-9 rounded-lg bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center font-bold text-sm">
+                                {{ auth()->user()->initials() }}
                             </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium truncate">{{ auth()->user()->name }}</p>
+                                <p class="text-xs text-zinc-500 truncate">{{ auth()->user()->email }}</p>
+                            </div>
+                            {{-- Icono que rota al abrir --}}
+                            <i class="fas fa-chevron-up text-xs text-zinc-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': userOpen }"></i>
+                        </button>
+
+                        {{-- Dropdown Usuario (Hacia arriba) --}}
+                        <div x-show="userOpen" x-collapse
+                            class="mt-2 space-y-1 px-2 border-l-2 border-zinc-200 dark:border-zinc-700 ml-4">
+
+                            <a href="{{ route('profile.edit') }}" wire:navigate
+                                class="flex items-center gap-2 px-3 py-2 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                                <i class="fas fa-cog w-4"></i> Configuración
+                            </a>
+
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md text-left">
+                                    <i class="fas fa-sign-out-alt w-4"></i> Cerrar Sesión
+                                </button>
+                            </form>
                         </div>
                     </div>
-                </flux:menu.radio.group>
+                </div>
 
-                <flux:menu.separator />
+            </div>
+        </div>
 
-                <flux:menu.radio.group>
-                    <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}
-                    </flux:menu.item>
-                </flux:menu.radio.group>
+        {{-- 3. CONTENIDO PRINCIPAL --}}
+        <div class="flex-1 lg:pl-64 flex flex-col min-h-screen">
 
-                <flux:menu.separator />
+            {{-- Header Mobile (Solo visible en móviles) --}}
+            <header
+                class="lg:hidden h-16 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 bg-white dark:bg-zinc-900 sticky top-0 z-40">
+                <button @click="sidebarOpen = true"
+                    class="p-2 -ml-2 rounded-md text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <a href="{{ route('home') }}">
+                    <x-app-logo />
+                </a>
+                <div class="w-8"></div> {{-- Espaciador --}}
+            </header>
 
-                <form method="POST" action="{{ route('logout') }}" class="w-full">
-                    @csrf
-                    <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                        {{ __('Log Out') }}
-                    </flux:menu.item>
-                </form>
-            </flux:menu>
-        </flux:dropdown>
-    </flux:sidebar>
+            {{-- Main Slot --}}
+            <main class="flex-1 p-6">
+                {{ $slot }}
+            </main>
+        </div>
 
-    <!-- Mobile User Menu -->
-    <flux:header class="lg:hidden">
-        <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
-
-        <flux:spacer />
-
-        <flux:dropdown position="top" align="end">
-            <flux:profile :initials="auth()->user()->initials()" icon-trailing="chevron-down" />
-
-            <flux:menu>
-                <flux:menu.radio.group>
-                    <div class="p-0 text-sm font-normal">
-                        <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                            <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                <span
-                                    class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                    {{ auth()->user()->initials() }}
-                                </span>
-                            </span>
-
-                            <div class="grid flex-1 text-start text-sm leading-tight">
-                                <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                <span class="truncate text-xs">{{ auth()->user()->email }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </flux:menu.radio.group>
-
-                <flux:menu.separator />
-
-                <flux:menu.radio.group>
-                    <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}
-                    </flux:menu.item>
-                </flux:menu.radio.group>
-
-                <flux:menu.separator />
-
-                <form method="POST" action="{{ route('logout') }}" class="w-full">
-                    @csrf
-                    <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                        {{ __('Log Out') }}
-                    </flux:menu.item>
-                </form>
-            </flux:menu>
-        </flux:dropdown>
-    </flux:header>
-
-    {{ $slot }}
+    </div>
 
     @fluxScripts
 </body>
