@@ -11,13 +11,18 @@
     <x-table>
         <x-slot name="tools">
             <div class="relative max-w-sm">
-                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-zinc-400">
-                    <i class="fas fa-magnifying-glass"></i>
+                {{-- 1. El Icono (Posicionado absolutamente a la izquierda) --}}
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <i class="fas fa-magnifying-glass text-zinc-400"></i>
                 </div>
+
+                {{-- 2. Tu Componente x-input --}}
+                {{-- Nota: Agregamos 'pl-10' para dar espacio al icono --}}
                 <x-input 
                     wire:model.live.debounce.300ms="search" 
-                    type="text"
-                    placeholder="Buscar..."
+                    type="text" 
+                    placeholder="Buscar rol..." 
+                    class="pl-10" 
                 />
             </div>
         </x-slot>

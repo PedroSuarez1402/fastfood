@@ -22,6 +22,7 @@ class Index extends Component
     public $email;
     public $password;
     public $role; // Rol seleccionado
+    public $search = '';
 
     public function rules()
     {
@@ -32,6 +33,11 @@ class Index extends Component
             // Password solo requerido al crear
             'password' => $this->isEditing ? 'nullable|min:6' : 'required|min:6',
         ];
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
     }
 
     public function create()
@@ -84,8 +90,11 @@ class Index extends Component
     
     public function render()
     {
+        $users = User::where('name', 'like', '%' . $this->search . '%')
+            ->orWhere('email', 'like', '%' . $this->search . '%')
+            ->paginate(10);
         return view('livewire.admin.users.index', [
-            'users' => User::with('roles')->paginate(10),
+            'users' => $users,
             'roles' => Role::all() // Para el select
         ]);
     }

@@ -8,15 +8,15 @@
         {{-- Slot: Tools (Barra de Búsqueda) --}}
         <x-slot name="tools">
             <div class="relative max-w-sm">
-                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-zinc-400">
-                    <i class="fas fa-magnifying-glass"></i>
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <i class="fas fa-magnifying-glass text-zinc-400"></i>
                 </div>
-                <input 
+                <x-input 
                     wire:model.live.debounce.300ms="search" 
                     type="text" 
-                    class="block w-full p-2 pl-10 text-sm rounded-lg border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-emerald-500 focus:border-emerald-500 placeholder-zinc-400" 
+                    class="pl-10"
                     placeholder="Buscar ticket, cliente o mesa..."
-                >
+                />
             </div>
         </x-slot>
 
