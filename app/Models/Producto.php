@@ -16,4 +16,8 @@ class Producto extends Model
     {
         return $this->hasMany(DetallePedido::class);
     }
+    public function ingredientes()
+    {
+        return $this->belongsToMany(Ingredient::class)->withPivot('quantity');
+    }
 }

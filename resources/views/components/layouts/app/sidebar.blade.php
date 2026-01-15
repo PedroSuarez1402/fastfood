@@ -52,6 +52,11 @@
                             wire:navigate>
                             Mesas
                         </x-sidebar.link>
+                        @can('gestionar_productos')
+                            <x-sidebar.link href="{{ route('admin.ingredients.index') }}" :active="request()->routeIs('admin.ingredients.*')" icon="fas fa-boxes-stacked" wire:navigate>
+                                Inventario
+                            </x-sidebar.link>
+                        @endcan
 
                         {{-- Menú Desplegable 'Gestión' --}}
                         @can('gestionar_usuarios')
@@ -157,6 +162,11 @@
                                 wire:navigate>
                                 Mesas
                             </x-sidebar.link>
+                            @can('gestionar_productos')
+                                <x-sidebar.link href="{{ route('admin.ingredients.index') }}" :active="request()->routeIs('admin.ingredients.*')" icon="fas fa-boxes-stacked" wire:navigate>
+                                    Inventario
+                                </x-sidebar.link>
+                            @endcan
                             @can('gestionar_usuarios')
                                 <x-sidebar.dropdown title="Gestión" icon="fas fa-cog" :active="request()->routeIs('admin.users.*')">
                                     <x-sidebar.link href="{{ route('admin.users.index') }}" :active="request()->routeIs('admin.users.*')" wire:navigate>

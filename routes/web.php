@@ -17,6 +17,7 @@ use App\Livewire\Admin\Productos\Show as ProductosShow;
 use App\Livewire\Admin\Pedidos\Index as PedidosIndex;
 use App\Livewire\Admin\Users\Index as UsersIndex;
 use App\Livewire\Admin\Roles\Index as RolesIndex;
+use App\Livewire\Admin\Ingredients\Index as IngredientsIndex;
 
 Route::get('/', function () {
     return view('welcome');
@@ -65,4 +66,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/roles', RolesIndex::class)
         ->middleware('can:gestionar_usuarios') // O gestionar_roles si lo creas
         ->name('admin.roles.index');
+    // Gestion de ingredientes
+    Route::get('/admin/ingredients', IngredientsIndex::class)->name('admin.ingredients.index');
 });
