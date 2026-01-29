@@ -19,22 +19,47 @@ class Index extends Component
     // Datos del Ingrediente
     public $ingredientId;
     public $name, $code, $unit, $cost, $stock, $min_stock;
+    public $compra_cantidad;
+    public $compra_precio_total;
 
     public function rules()
     {
         return [
             'name'      => 'required|string|min:3',
             'code'      => 'required|string|unique:ingredients,code,' . $this->ingredientId,
-            'unit'      => 'required|in:kg,g,l,ml,unid',
+            'unit'      => 'required|in:kg,g,lb,lt,ml,unid',
             'cost'      => 'required|numeric|min:0',
             'stock'     => 'required|numeric|min:0',
             'min_stock' => 'required|numeric|min:0',
         ];
     }
+    public function updatedCompraPrecioTotal()
+    {
+        $this->calcularCostoUnitario();
+    }
+    public function updatedCompraCantidad()
+    {
+        $this->calcularCostoUnitario();
+    }
+    public function calcularCostoUnitario()
+    {
+        // Solo calculamos si ambos valores son válidos y mayores a 0
+        if (is_numeric($this->compra_cantidad) && $this->compra_cantidad > 0 && 
+            is_numeric($this->compra_precio_total) && $this->compra_precio_total > 0) {
+            
+            // Costo Unitario = Total / Cantidad
+            $this->cost = round($this->compra_precio_total / $this->compra_cantidad, 2);
+            
+            // Opcional: Si es un registro nuevo, asignamos el stock inicial igual a la compra
+            if (!$this->isEditing) {
+                $this->stock = $this->compra_cantidad;
+            }
+        }
+    }
 
     public function create()
     {
-        $this->reset(['name', 'code', 'unit', 'cost', 'stock', 'min_stock', 'ingredientId']);
+        $this->reset(['name', 'code', 'unit', 'cost', 'stock', 'min_stock', 'ingredientId', 'compra_cantidad', 'compra_precio_total']);
         $this->isEditing = false;
         $this->showModal = true;
     }

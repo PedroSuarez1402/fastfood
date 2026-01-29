@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('code')->unique();
-            $table->enum('unit', ['kg', 'g', 'l', 'ml', 'unid']);
+            $table->enum('unit', ['kg', 'g','lb', 'lt', 'ml', 'unid']);
             $table->decimal('cost', 10, 2);
             $table->decimal('stock', 10, 3);
             $table->decimal('min_stock', 10, 3)->default(5);

@@ -1,4 +1,4 @@
-<div class="max-2-3xl mx-auto space-y-6">
+<div class="max-w-4xl mx-auto space-y-6">
     <div class="flex justify-between items-center">
         <x-header 
             title="Nuevo Producto"
@@ -44,6 +44,69 @@
             @error('descripcion')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
             @enderror
+        </div>
+        <div class="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 space-y-5">
+            <div class="flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 pb-2">
+                <h3 class="text-lg font-medium text-zinc-900 dark:text-zinc-100">Receta (Escandallo)</h3>
+                <span class="text-xs text-zinc-500">Define qué se descuenta del inventario al vender.</span>
+            </div>
+
+            {{-- Formulario para añadir ingrediente --}}
+            <div class="flex flex-col md:flex-row gap-4 items-end bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-lg">
+                <div class="flex-1 w-full">
+                    <x-label for="ingrediente">Ingrediente</x-label>
+                    <x-select wire:model="ingrediente_seleccionado" id="ingrediente">
+                        <option value="">Seleccionar insumo...</option>
+                        @foreach ($ingredientes_disponibles as $ing)
+                            <option value="{{ $ing->id }}">{{ $ing->name }} ({{ $ing->unit }})</option>
+                        @endforeach
+                    </x-select>
+                    @error('ingrediente_seleccionado') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="w-full md:w-40">
+                    <x-label for="cantidad">Cantidad</x-label>
+                    <x-input wire:model="cantidad_ingrediente" id="cantidad" type="number" step="0.001" placeholder="0.000" />
+                    @error('cantidad_ingrediente') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+
+                <x-button type="button" wire:click="agregarIngrediente" variant="secondary" class="w-full md:w-auto">
+                    <i class="fas fa-plus mr-2"></i> Agregar
+                </x-button>
+            </div>
+            {{-- Tabla de Receta --}}
+            <div class="overflow-x-auto border border-zinc-200 dark:border-zinc-700 rounded-lg">
+                <table class="w-full text-sm text-left text-zinc-600 dark:text-zinc-300">
+                    <thead class="bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium">
+                        <tr>
+                            <th class="px-4 py-3">Ingrediente</th>
+                            <th class="px-4 py-3 text-center">Cantidad</th>
+                            <th class="px-4 py-3 text-center">Unidad</th>
+                            <th class="px-4 py-3 text-right">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                        @forelse ($receta as $index => $item)
+                            <tr>
+                                <td class="px-4 py-3">{{ $item['nombre'] }}</td>
+                                <td class="px-4 py-3 text-center font-bold text-emerald-600">{{ floatval($item['cantidad']) }}</td>
+                                <td class="px-4 py-3 text-center text-xs uppercase">{{ $item['unidad'] }}</td>
+                                <td class="px-4 py-3 text-right">
+                                    <button type="button" wire:click="quitarIngrediente({{ $index }})" class="text-red-500 hover:text-red-700 transition-colors">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-4 py-6 text-center text-zinc-400 italic">
+                                    No hay ingredientes agregados a la receta.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
         {{-- Precio --}}
         <div>
