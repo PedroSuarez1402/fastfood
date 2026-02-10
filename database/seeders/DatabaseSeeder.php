@@ -7,18 +7,42 @@ use App\Models\Mesa;
 use App\Models\User;
 use App\Models\Producto;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 use Faker\Factory as Faker;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Ejecutar seeder de roles y permisos primero
+        $this->call(RolesAndPermissionsSeeder::class);
+
         $faker = Faker::create();
 
-        User::factory()->create([
+        // Crear usuario Administrador con rol SuperAdmin
+        $admin = User::factory()->create([
             'name' => 'Administrador',
-            'email' => 'admin@example.com',
+            'email' => 'admin@fastfood.com',
+            'password' => Hash::make('password'),
         ]);
+        $admin->assignRole('SuperAdmin');
+
+        // Crear usuario Cocinero
+        $cocinero = User::create([
+            'name' => 'Cocinero',
+            'email' => 'cocinero@fastfood.com',
+            'password' => Hash::make('password'),
+        ]);
+        $cocinero->assignRole('Cocina');
+
+        // Crear usuario Mesero
+        $mesero = User::create([
+            'name' => 'Mesero',
+            'email' => 'mesero@fastfood.com',
+            'password' => Hash::make('password'),
+        ]);
+        $mesero->assignRole('Mesero');
 
         // Categorías
         $comidas = Categoria::create(['nombre' => 'Comidas', 'descripcion' => 'Platos principales']);
