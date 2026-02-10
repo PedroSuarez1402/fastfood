@@ -116,7 +116,7 @@
 
     </x-table>
         {{-- Modal Asignar Mesa --}}
-        <x-modal title="Asignar Mesa" maxWidth="lg" wire:model="showAsignarMesaModal">
+        <x-modal title="Asignar Mesa" maxWidth="9/10" wire:model="showAsignarMesaModal">
 
             @if ($pedidoSeleccionado)
                 <div class="space-y-4">

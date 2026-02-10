@@ -92,7 +92,7 @@
     </x-table>
 
     {{-- MODAL --}}
-    <x-modal wire:model="showModal" :title="$isEditing ? 'Editar Insumo' : 'Registrar Insumo'">
+    <x-modal wire:model="showModal" :title="$isEditing ? 'Editar Insumo' : 'Registrar Insumo'" maxWidth="lg">
         <form wire:submit.prevent="save" class="space-y-4">
 
             <div class="grid grid-cols-2 gap-4">
@@ -133,41 +133,55 @@
                 {{-- SECCIÓN CALCULADORA (Visualmente separada) --}}
                 <div
                     class="col-span-2 bg-zinc-50 dark:bg-zinc-800/50 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700">
-                    <h4 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Calculadora de Costo</h4>
+                    <h4 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+                        <i class="fas fa-calculator"></i>
+                        {{ $isEditing ? 'Registrar Nueva Compra (Reabastecer)' : 'Calculadora de Costo Inicial' }}
+                    </h4>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <x-label for="compra_cantidad">Cantidad Comprada</x-label>
-                            <x-input id="compra_cantidad" type="number" step="0.001"
-                                wire:model.live="compra_cantidad" placeholder="Ej: 200" />
+                            <div class="relative">
+                                <x-input id="compra_cantidad" type="number" step="0.001" wire:model.live="compra_cantidad" placeholder="Ej: 200" />
+                                @if($unit)
+                                    <span class="absolute right-3 top-2.5 text-xs text-zinc-500 font-bold">{{ $unit }}</span>
+                                @endif
+                            </div>
                         </div>
+                        {{-- Precio Total --}}
                         <div>
-                            <x-label for="compra_precio_total">Precio Total Factura</x-label>
-                            <x-input id="compra_precio_total" type="number" step="0.01"
-                                wire:model.live="compra_precio_total" placeholder="Ej: 2800000" />
+                            <x-label for="compra_precio_total">Precio Total Factura ($)</x-label>
+                            <x-input id="compra_precio_total" type="number" step="0.01" wire:model.live="compra_precio_total" placeholder="Ej: 2000000" />
                         </div>
                     </div>
                 </div>
 
                 {{-- Resultados Calculados --}}
-                <div>
-                    <x-label for="cost">Costo Unitario (Calculado)</x-label>
-                    {{-- Readonly para que el usuario prefiera usar la calculadora, pero editable si es necesario --}}
-                    <x-input id="cost" type="number" step="0.01" wire:model="cost" placeholder="0.00"
-                        class="bg-zinc-100" />
-                    @error('cost')
-                        <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
-                    @enderror
+                <div class="grid grid-cols-2 gap-4">
+                    
+                    {{-- Costo Unitario --}}
+                    <div>
+                        <x-label for="cost">Costo Unitario (Nuevo)</x-label>
+                        <x-input id="cost" type="number" step="0.01" wire:model="cost" class="bg-zinc-100 dark:bg-zinc-800 font-bold text-zinc-700" readonly />
+                        <p class="text-xs text-zinc-400 mt-1">Calculado automáticamente.</p>
+                    </div>
+
+                    {{-- Stock Final --}}
+                    <div>
+                        <x-label for="stock">Stock Final en Inventario</x-label>
+                        <div class="relative">
+                            <x-input id="stock" type="number" step="0.001" wire:model="stock" class="bg-zinc-100 dark:bg-zinc-800 font-bold text-emerald-600" readonly />
+                            
+                            {{-- Feedback Visual de la Suma --}}
+                            @if($isEditing && $compra_cantidad > 0)
+                                <div class="absolute -bottom-5 right-0 text-xs text-emerald-600 font-medium">
+                                    (Actual: {{ floatval($stock_original) }} + Compra: {{ floatval($compra_cantidad) }})
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <x-label for="stock">Stock Actual</x-label>
-                    <x-input id="stock" type="number" step="0.001" wire:model="stock" placeholder="0" />
-                    @error('stock')
-                        <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="col-span-2">
+                <div class="col-span-2 mt-4">
                     <x-label for="min_stock">Alerta de Stock Mínimo</x-label>
                     <x-input id="min_stock" type="number" step="0.001" wire:model="min_stock"
                         placeholder="Ej: 5" />
