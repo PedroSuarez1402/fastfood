@@ -22,6 +22,8 @@ class Index extends Component
     public $compra_cantidad;
     public $compra_precio_total;
 
+    public $stock_original = 0;
+
     public function rules()
     {
         return [
@@ -49,17 +51,22 @@ class Index extends Component
             
             // Costo Unitario = Total / Cantidad
             $this->cost = round($this->compra_precio_total / $this->compra_cantidad, 2);
-            
+        }
+
+            $cantidad_comprada = (float) $this->compra_cantidad;
             // Opcional: Si es un registro nuevo, asignamos el stock inicial igual a la compra
             if (!$this->isEditing) {
-                $this->stock = $this->compra_cantidad;
+                $this->stock = $this->stock_original + $cantidad_comprada;
+            } else {
+                $this->stock = $cantidad_comprada;
             }
-        }
+        
     }
 
     public function create()
     {
         $this->reset(['name', 'code', 'unit', 'cost', 'stock', 'min_stock', 'ingredientId', 'compra_cantidad', 'compra_precio_total']);
+        $this->stock_original = 0;
         $this->isEditing = false;
         $this->showModal = true;
     }
@@ -73,6 +80,10 @@ class Index extends Component
         $this->cost      = $ingredient->cost;
         $this->stock     = $ingredient->stock;
         $this->min_stock = $ingredient->min_stock;
+        $this->stock_original = $ingredient->stock;
+
+        $this->compra_cantidad = null;
+        $this->compra_precio_total = null;
 
         $this->isEditing = true;
         $this->showModal = true;
